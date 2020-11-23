@@ -53,6 +53,19 @@ public class S2GeometryFunctions {
         return s2Cell(lat,lon,30);
     }
 
+    @ScalarFunction("s2_cell_id")
+    @Description("Returns cell id for latitude,longitude degrees and level")
+    @SqlType(StandardTypes.VARCHAR)
+    @SqlNullable
+    public static Slice s2CellId(
+            @SqlType(StandardTypes.DOUBLE ) double lat,
+            @SqlType(StandardTypes.DOUBLE) double lon,
+            @SqlType(StandardTypes.INTEGER) long level)
+    {
+        if (level<0 || level>30) return null;
+        return utf8Slice(Long.toString(S2CellId.fromLatLng(S2LatLng.fromDegrees(lat,lon)).parent(toIntExact(level)).id()));
+    }
+
     @ScalarFunction("s2_parent")
     @Description("Returns cell token parent")
     @SqlType(StandardTypes.VARCHAR)
